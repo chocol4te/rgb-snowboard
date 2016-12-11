@@ -41,6 +41,8 @@ int16_t GyrY[ARRAY_SIZE];
 int16_t GyrZ[ARRAY_SIZE];
 uint8_t index = 0; // Index for arrays
 
+#include<SoftwareSerial.h>
+SoftwareSerial Bluetooth(10, 11);
 uint8_t mode;
 
 void setup(){
@@ -49,7 +51,9 @@ void setup(){
   Wire.write(0x6B);  // PWR_MGMT_1 register
   Wire.write(0);     // set to zero (wakes up the MPU-6050)
   Wire.endTransmission(true);
-  Serial.begin(9600);
+  
+  Serial.begin(57600);
+  Bluetooth.begin(57600);
 
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
 
@@ -58,8 +62,9 @@ void setup(){
   // Interrupt for bluetooth colour control, also write the android app
 }
 void loop(){
+  checkBluetooth();
   updateValues(); // Takes approx 2700 microseconds
-  printValues();
+  //printValues();
   // Calculate new postion and velocity
   // Update LEDs to represent this
   delay(100);
@@ -99,6 +104,13 @@ void updateValues() {
   AvgGyrX = AvgGyrX / ARRAY_SIZE;
   AvgGyrY = AvgGyrY / ARRAY_SIZE;
   AvgGyrZ = AvgGyrZ / ARRAY_SIZE;
+}
+
+void checkBluetooth() {
+  while (Bluetooth.available()) {
+    mode = Bluetooth.read();
+    Serial.println(mode);
+  }
 }
 
 void printValues() {
