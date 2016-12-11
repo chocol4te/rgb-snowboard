@@ -87,32 +87,17 @@ void updateValues() {
 
   for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgAccX += AccX[i];
-  }
-  AvgAccX = AvgAccX / ARRAY_SIZE;
-  
-  for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgAccY += AccY[i];
-    }
-  AvgAccY = AvgAccY / ARRAY_SIZE;
-  
-  for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgAccZ += AccZ[i];
-  }
-  AvgAccZ = AvgAccZ / ARRAY_SIZE;
-  
-  for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgGyrX += GyrX[i]; 
-  }
-  AvgGyrX = AvgGyrX / ARRAY_SIZE;
-  
-  for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgGyrY += GyrY[i];
-  }
-  AvgGyrY = AvgGyrY / ARRAY_SIZE;
-  
-  for (uint8_t i = 0; i < ARRAY_SIZE; i++) {
     AvgGyrZ += GyrZ[i];
   }
+  AvgAccX = AvgAccX / ARRAY_SIZE;
+  AvgAccY = AvgAccY / ARRAY_SIZE;
+  AvgAccZ = AvgAccZ / ARRAY_SIZE;
+  AvgGyrX = AvgGyrX / ARRAY_SIZE;
+  AvgGyrY = AvgGyrY / ARRAY_SIZE;
   AvgGyrZ = AvgGyrZ / ARRAY_SIZE;
 }
 
