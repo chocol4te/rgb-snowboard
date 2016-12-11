@@ -25,15 +25,23 @@
 #include <platforms.h>
 #include <power_mgt.h>
 #include <FastLED.h>
-
 #define NUM_LEDS 240
 #define DATA_PIN 3
 CRGB leds[NUM_LEDS];
 
 #include<Wire.h>
 const int MPU_addr=0x68;  // I2C address of the MPU-6050
+#define ARRAY_SIZE 5 // Number of values to store in running average for each sensor
+int16_t AvgAccX,AvgAccY,AvgAccZ,Tmp,AvgGyrX,AvgGyrY,AvgGyrZ;
+int16_t AccX[ARRAY_SIZE];
+int16_t AccY[ARRAY_SIZE];
+int16_t AccZ[ARRAY_SIZE];
+int16_t GyrX[ARRAY_SIZE];
+int16_t GyrY[ARRAY_SIZE];
+int16_t GyrZ[ARRAY_SIZE];
+uint8_t index = 0; // Index for arrays
 
-int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ;
+uint8_t mode;
 
 void setup(){
   Wire.begin();
@@ -45,12 +53,12 @@ void setup(){
 
   FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
 
-  // Need calibration function
+  // No need for calibration function as accelerometer and gyro will drift over time anyway.
+  // Need bluetooth-checking function
   // Interrupt for bluetooth colour control, also write the android app
 }
 void loop(){
   updateValues();
-  printValues();
   // Calculate new postion and velocity
   // Update LEDs to represent this
   delay(500);
@@ -61,22 +69,28 @@ void updateValues() {
   Wire.write(0x3B);  // starting with register 0x3B (ACCEL_XOUT_H)
   Wire.endTransmission(false);
   Wire.requestFrom(MPU_addr,14,true);  // request a total of 14 registers
-  AcX=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
-  AcY=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
-  AcZ=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
+  AccX[index]=Wire.read()<<8|Wire.read();  // 0x3B (ACCEL_XOUT_H) & 0x3C (ACCEL_XOUT_L)    
+  AccY[index]=Wire.read()<<8|Wire.read();  // 0x3D (ACCEL_YOUT_H) & 0x3E (ACCEL_YOUT_L)
+  AccZ[index]=Wire.read()<<8|Wire.read();  // 0x3F (ACCEL_ZOUT_H) & 0x40 (ACCEL_ZOUT_L)
   Tmp=Wire.read()<<8|Wire.read();  // 0x41 (TEMP_OUT_H) & 0x42 (TEMP_OUT_L)
-  GyX=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
-  GyY=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
-  GyZ=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+  GyrX[index]=Wire.read()<<8|Wire.read();  // 0x43 (GYRO_XOUT_H) & 0x44 (GYRO_XOUT_L)
+  GyrY[index]=Wire.read()<<8|Wire.read();  // 0x45 (GYRO_YOUT_H) & 0x46 (GYRO_YOUT_L)
+  GyrZ[index]=Wire.read()<<8|Wire.read();  // 0x47 (GYRO_ZOUT_H) & 0x48 (GYRO_ZOUT_L)
+
+  if (index = 4) {
+    index = 0;
+  }
+  else {
+    index++;
+  }
 }
 
 void printValues() {
-  Serial.print("AcX = "); Serial.print(AcX);
-  Serial.print(" | AcY = "); Serial.print(AcY);
-  Serial.print(" | AcZ = "); Serial.print(AcZ);
+  Serial.print("AvgAccX = "); Serial.print(AvgAccX);
+  Serial.print(" | AvgAccY = "); Serial.print(AvgAccY);
+  Serial.print(" | AvgAccZ = "); Serial.print(AvgAccZ);
   Serial.print(" | Tmp = "); Serial.print(Tmp/340.00+36.53);  //equation for temperature in degrees C from datasheet
-  Serial.print(" | GyX = "); Serial.print(GyX);
-  Serial.print(" | GyY = "); Serial.print(GyY);
-  Serial.print(" | GyZ = "); Serial.println(GyZ);
+  Serial.print(" | AvgGyrX = "); Serial.print(AvgGyrX);
+  Serial.print(" | AvgGyrY = "); Serial.print(AvgGyrY);
+  Serial.print(" | AvgGyrZ = "); Serial.println(AvgGyrZ);
 }
-
