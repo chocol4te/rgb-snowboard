@@ -45,6 +45,7 @@ public class DeviceList extends AppCompatActivity {
             //Ask to the user turn the bluetooth on
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnBTon, 1);
+            pairedDevicesList();
         }
 
         pairedDevicesList();
