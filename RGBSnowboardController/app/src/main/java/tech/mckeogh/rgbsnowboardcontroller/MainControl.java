@@ -23,7 +23,7 @@ import android.os.AsyncTask;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MainControl extends AppCompatActivity implements OnSeekBarChangeListener {
+public class MainControl extends AppCompatActivity{
 
     private SeekBar brightness;
     String address = null;
@@ -47,7 +47,31 @@ public class MainControl extends AppCompatActivity implements OnSeekBarChangeLis
 
         //call the widgets
         brightness = (SeekBar) findViewById(R.id.seekBar1);
-        brightness.setOnSeekBarChangeListener(this);
+        brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+                if (btSocket != null) {
+                    try {
+                        int progress = brightness.getProgress();
+                        btSocket.getOutputStream().write(progress);
+
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
+                }
+            }
+        });
 
         new ConnectBT().execute(); //Call the class to connect
     }
@@ -66,20 +90,6 @@ public class MainControl extends AppCompatActivity implements OnSeekBarChangeLis
         finish(); //return to the first layout
 
     }
-
-    public void onOnStopTrackingTouch (SeekBar brightness) {
-            if (btSocket != null) {
-                try {
-                    int progress = brightness.getProgress();
-                    btSocket.getOutputStream().write(progress);
-                    Toast.makeText(getApplicationContext(), progress, Toast.LENGTH_LONG).show();
-
-                } catch (IOException e) {
-                    msg("Error");
-                }
-            }
-    }
-
     // fast way to call Toast
     private void msg(String s)
     {
