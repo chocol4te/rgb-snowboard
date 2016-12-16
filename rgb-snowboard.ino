@@ -126,29 +126,56 @@ void updateValues() {
 void checkBluetooth() {
   while (Bluetooth.available()) { // While instead of if, just in case multiple bytes occured in between checks. Since each byte contains all the data, just use the latest one.
     inByte = Bluetooth.read();
-    type = inByte >> 6; // Bitshift data values into the ether.
-    data = inByte << 2;
+    Serial.println(inByte, BIN);
+    type = inByte;
+    bitClear(type, 2);
+    bitClear(type, 3);
+    bitClear(type, 4);
+    bitClear(type, 5);
+    bitClear(type, 6);
+    bitClear(type, 7);
+    data = inByte;
+    bitClear(data, 0);
+    bitClear(data, 1);
+    data = data >> 2;
+    Serial.print(type);
+    Serial.print(" ");
+    Serial.println(data);
+    /*
     switch (type) {
       case 0: { // Type: power on/off
-      
+        Serial.write(type);
+        Serial.print(" ");
+        Serial.write(data);
+        Serial.println();
       }
       break;
       
       case 1: { // Type: mode
-        
+        Serial.write(type);
+        Serial.print(" ");
+        Serial.write(data);
+        Serial.println();
       }
       break;
       
       case 2: { // Type: brightness
-        
+        Serial.write(type);
+        Serial.print(" ");
+        Serial.write(data);
+        Serial.println();
       }
       break;
       
       case 3: { // Type: tbd
-        
+        Serial.write(type);
+        Serial.print(" ");
+        Serial.write(data);
+        Serial.println();
       }
       break;
     }
+    */
   }
 }
 
