@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.view.View;
@@ -18,8 +17,9 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
-
+import java.util.BitSet;
 import java.io.IOException;
+import java.util.BitSet;
 import java.util.UUID;
 
 public class MainControl extends AppCompatActivity{
@@ -32,6 +32,7 @@ public class MainControl extends AppCompatActivity{
     private boolean isBtConnected = false;
     //SPP UUID. Look for it
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
+    BitSet command = new BitSet(8);
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -62,9 +63,13 @@ public class MainControl extends AppCompatActivity{
 
                 if (btSocket != null) {
                     try {
-                        int progress = brightness.getProgress();
-                        btSocket.getOutputStream().write(progress);
-
+                        int progress = brightness.getProgress(); // Awful, awful. I know a range of 0-100 doesn't need a long, but what am I to do?
+                        progress = progress << 2; // Shift data along to make space for type
+                        command = BitSet.valueOf(new long[] {progress});
+                        command.set(0, true); // Binary type for brightness
+                        command.set(1, false);
+                        byte test = 0;
+                        btSocket.getOutputStream().write(test); // Aaand back to an int for sending over bluetooth. God this is awful. I am so sorry
                     } catch (IOException e) {
                         msg("Error");
                     }
@@ -143,5 +148,6 @@ public class MainControl extends AppCompatActivity{
             }
             progress.dismiss();
         }
+
     }
 }
