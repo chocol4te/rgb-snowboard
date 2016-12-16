@@ -43,7 +43,12 @@ uint8_t index = 0; // Index for arrays
 
 #include<SoftwareSerial.h>
 SoftwareSerial Bluetooth(10, 11);
+uint8_t inByte;
+uint8_t type;
+uint8_t data;
+
 uint8_t mode;
+uint8_t brightness;
 
 void setup(){
   Wire.begin();
@@ -60,6 +65,18 @@ void setup(){
   // No need for calibration function as accelerometer and gyro will drift over time anyway.
   // Need bluetooth-checking function
   // Interrupt for bluetooth colour control, also write the android app
+
+  /* Controller --> Arduino bluetooth comm in following format.
+  // 8 bits, 
+  0 (LSB) -- Type (mode, brightness, etc)
+  1       -- Type
+  2       -- Data
+  3       -- Data
+  4       -- Data
+  5       -- Data
+  6       -- Data
+  7 (MSB) -- Data
+  */
 }
 void loop(){
   checkBluetooth();
@@ -107,9 +124,31 @@ void updateValues() {
 }
 
 void checkBluetooth() {
-  while (Bluetooth.available()) {
-    mode = Bluetooth.read();
-    Serial.println(mode);
+  while (Bluetooth.available()) { // While instead of if, just in case multiple bytes occured in between checks. Since each byte contains all the data, just use the latest one.
+    inByte = Bluetooth.read();
+    type = inByte >> 6; // Bitshift data values into the ether.
+    data = inByte << 2;
+    switch (type) {
+      case 0: { // Type: power on/off
+      
+      }
+      break;
+      
+      case 1: { // Type: mode
+        
+      }
+      break;
+      
+      case 2: { // Type: brightness
+        
+      }
+      break;
+      
+      case 3: { // Type: tbd
+        
+      }
+      break;
+    }
   }
 }
 
