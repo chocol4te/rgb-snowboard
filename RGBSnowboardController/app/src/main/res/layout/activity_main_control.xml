@@ -7,11 +7,13 @@
     android:baselineAligned="false">
 
     <Switch
-        android:text="Power"
+        android:text="    Power"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/switch1"
-        android:layout_weight="0.05" />
+        android:layout_weight="0.05"
+        android:fontFamily="sans-serif"
+        android:textSize="18sp" />
 
     <SeekBar
         android:layout_width="match_parent"
@@ -24,16 +26,45 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.05" />
 
-    <RadioButton
-        android:text="RadioButton"
-        android:layout_width="124dp"
+    <TextView
+        android:text="    Mode"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/radioButton" />
+        android:id="@+id/textView"
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10px">
+        <RadioButton
+            android:text="Color Demo"
+            android:layout_width="124dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButton"
+            android:layout_weight="0.05" />
+
+        <RadioButton
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButton2"
+            android:layout_weight="0.05"
+            android:text="Motion Reactive" />
+
+        <RadioButton
+            android:text="Audio Reactive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/radioButton3"
+            android:layout_weight="0.05" />
+
+    </RadioGroup>
     <Button
         android:text="Disconnect"
         android:layout_height="wrap_content"
         android:id="@+id/button"
-        android:layout_width="156dp" />
+        android:layout_width="match_parent"
+        android:padding="16px"/>
 
 </LinearLayout>

@@ -3,6 +3,7 @@ package tech.mckeogh.rgbsnowboardcontroller;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ButtonBarLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -10,6 +11,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewDebug;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
@@ -28,6 +30,7 @@ public class MainControl extends AppCompatActivity{
 
     private SeekBar brightness;
     private Switch power;
+    private Button disconnect;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -36,6 +39,7 @@ public class MainControl extends AppCompatActivity{
     //SPP UUID. Look for it
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BitSet command = new BitSet(8);
+    int progresssaved;
 
     // Misc commands - need to actually check these
     byte defaultcommand = 4;
@@ -53,6 +57,7 @@ public class MainControl extends AppCompatActivity{
         setContentView(R.layout.activity_main_control);
 
         brightness = (SeekBar) findViewById(R.id.seekBar1);
+        brightness.setProgress(50); // Centre bar to match default brightness snowboard side
         brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -90,7 +95,7 @@ public class MainControl extends AppCompatActivity{
                 if (isChecked) {
                     try {
                         brightness.setEnabled(true);
-                        brightness.setProgress(50); // Half brightness
+                        brightness.setProgress(progresssaved); // Half brightness
                         btSocket.getOutputStream().write(defaultcommand);
                     } catch (IOException e) {
                         msg("Error");
@@ -98,6 +103,7 @@ public class MainControl extends AppCompatActivity{
                 }
                 else {
                     try {
+                        progresssaved = brightness.getProgress();
                         brightness.setEnabled(false);
                         brightness.setProgress(0);
                         btSocket.getOutputStream().write(poweroffcommand);
@@ -106,6 +112,14 @@ public class MainControl extends AppCompatActivity{
                     }
                 }
 
+            }
+        });
+
+        disconnect = (Button) findViewById(R.id.button);
+        disconnect.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Disconnect();
             }
         });
 
