@@ -36,11 +36,10 @@ public class DeviceList extends AppCompatActivity {
         bluetooth = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetooth == null) {
-            //Show a mensag. that the device has no bluetooth adapter
             Toast.makeText(getApplicationContext(), "Bluetooth Device Not Available", Toast.LENGTH_LONG).show();
-
-            //finish apk
             finish();
+            pairedDevicesList();
+
         } else if (!bluetooth.isEnabled()) {
             //Ask to the user turn the bluetooth on
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
