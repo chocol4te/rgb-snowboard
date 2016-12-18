@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:baselineAligned="false">
 
     <Switch
         android:text="Power"
@@ -17,6 +18,17 @@
         android:layout_height="wrap_content"
         android:id="@+id/seekBar1"
         android:layout_weight="0.05" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.05" />
+
+    <RadioButton
+        android:text="RadioButton"
+        android:layout_width="124dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/radioButton" />
 
     <Button
         android:text="Disconnect"

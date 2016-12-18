@@ -10,8 +10,10 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewDebug;
+import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.Switch;
 import android.widget.Toast;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class MainControl extends AppCompatActivity{
 
     private SeekBar brightness;
+    private Switch power;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -34,6 +37,11 @@ public class MainControl extends AppCompatActivity{
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BitSet command = new BitSet(8);
 
+    // Misc commands - need to actually check these
+    byte defaultcommand = 4;
+    byte poweroffcommand = 12;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -42,10 +50,8 @@ public class MainControl extends AppCompatActivity{
         Intent newint = getIntent();
         address = newint.getStringExtra(DeviceList.EXTRA_ADDRESS); //receive the address of the bluetooth device
 
-        //view of the ledControl
         setContentView(R.layout.activity_main_control);
 
-        //call the widgets
         brightness = (SeekBar) findViewById(R.id.seekBar1);
         brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
@@ -74,6 +80,32 @@ public class MainControl extends AppCompatActivity{
                         msg("Error");
                     }
                 }
+            }
+        });
+
+        power = (Switch) findViewById(R.id.switch1);
+        power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    try {
+                        brightness.setEnabled(true);
+                        brightness.setProgress(50); // Half brightness
+                        btSocket.getOutputStream().write(defaultcommand);
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
+                }
+                else {
+                    try {
+                        brightness.setEnabled(false);
+                        brightness.setProgress(0);
+                        btSocket.getOutputStream().write(poweroffcommand);
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
+                }
+
             }
         });
 
