@@ -7,13 +7,15 @@
     android:baselineAligned="false">
 
     <Switch
-        android:text="    Power"
+        android:text="Power"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/switch1"
         android:layout_weight="0.05"
         android:fontFamily="sans-serif"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"/>
 
     <SeekBar
         android:layout_width="match_parent"
@@ -27,28 +29,33 @@
         android:layout_weight="0.05" />
 
     <TextView
-        android:text="    Mode"
+        android:text="Mode"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView"
         android:textColor="@android:color/black"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="5dp"/>
 
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10px">
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:id="@+id/modeGroup">
         <RadioButton
             android:text="Color Demo"
-            android:layout_width="124dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/radioButton"
+            android:id="@+id/colorDemo"
             android:layout_weight="0.05" />
 
         <RadioButton
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/radioButton2"
+            android:id="@+id/mReactive"
             android:layout_weight="0.05"
             android:text="Motion Reactive" />
 
@@ -56,7 +63,7 @@
             android:text="Audio Reactive"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/radioButton3"
+            android:id="@+id/aReactive"
             android:layout_weight="0.05" />
 
     </RadioGroup>
@@ -65,6 +72,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/button"
         android:layout_width="match_parent"
-        android:padding="16px"/>
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"/>
 
 </LinearLayout>

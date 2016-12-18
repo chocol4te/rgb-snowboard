@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.Switch;
@@ -31,6 +33,8 @@ public class MainControl extends AppCompatActivity{
     private SeekBar brightness;
     private Switch power;
     private Button disconnect;
+    private RadioGroup modeGroup;
+    private RadioButton modeButton;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -89,6 +93,7 @@ public class MainControl extends AppCompatActivity{
         });
 
         power = (Switch) findViewById(R.id.switch1);
+        power.setChecked(true);
         power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -112,6 +117,20 @@ public class MainControl extends AppCompatActivity{
                     }
                 }
 
+            }
+        });
+
+        modeGroup = (RadioGroup) findViewById(R.id.modeGroup);
+        modeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.colorDemo) {
+
+                } else  if (checkedId == R.id.mReactive) {
+
+                } else {
+
+                }
             }
         });
 
