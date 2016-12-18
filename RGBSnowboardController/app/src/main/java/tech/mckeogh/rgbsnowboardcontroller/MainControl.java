@@ -121,15 +121,31 @@ public class MainControl extends AppCompatActivity{
         });
 
         modeGroup = (RadioGroup) findViewById(R.id.modeGroup);
+        modeGroup.check(R.id.colorDemo);
         modeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            byte colordemocommand;
+            byte mreactivecommand;
+            byte areactivecommand;
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.colorDemo) {
-
+                    try {
+                        btSocket.getOutputStream().write(colordemocommand);
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
                 } else  if (checkedId == R.id.mReactive) {
-
+                    try {
+                        btSocket.getOutputStream().write(mreactivecommand);
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
                 } else {
-
+                    try {
+                        btSocket.getOutputStream().write(areactivecommand);
+                    } catch (IOException e) {
+                        msg("Error");
+                    }
                 }
             }
         });

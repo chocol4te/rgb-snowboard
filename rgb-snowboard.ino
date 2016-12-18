@@ -68,14 +68,18 @@ void setup(){
 
   /* Controller --> Arduino bluetooth comm in following format.
   // 8 bits, 
-  0 (LSB) -- Type (mode, brightness, etc)
-  1       -- Type
+  0 (LSB) -- Data
+  1       -- Data
   2       -- Data
   3       -- Data
   4       -- Data
   5       -- Data
-  6       -- Data
-  7 (MSB) -- Data
+  6       -- Type
+  7 (MSB) -- Type
+
+
+  EG 01000010, will be changing the mode (01) to audio reactive (000010 = 2, 3rd mode).
+     00101011 will change the brightness (00) to 43 (101011).
   */
 }
 void loop(){
