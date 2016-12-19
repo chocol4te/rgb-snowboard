@@ -79,7 +79,7 @@ void setup(){
 
 
   EG 01000010, will be changing the mode (01) to audio reactive (000010 = 2, 3rd mode).
-     00101011 will change the brightness (00) to 43 (101011).
+     10101011 will change the brightness (10) to 43 (101011).
   */
 }
 void loop(){
@@ -88,6 +88,18 @@ void loop(){
   //printValues();
   // Calculate new postion and velocity
   // Update LEDs to represent this
+
+  switch mode {
+    case 0: { // Color Demo
+      
+    }
+    case 1: { // Motion Reactive
+      
+    }
+    case 2: { // Audio Reactive
+      
+    }
+  }
   delay(100);
 }
 
@@ -147,22 +159,21 @@ void checkBluetooth() {
     
     switch (type) {
       case 0: { // Type: power on/off (00)
-        Serial.write(type);
-        Serial.print(" ");
-        Serial.write(data);
-        Serial.println();
+        if (data == 0) {
+          // Low power, turn off unused devices
+        } else {
+          // Power on. set brightness to data
+        }
       }
       break;
       
       case 1: { // Type: mode (01)
-        Serial.write(type);
-        Serial.print(" ");
-        Serial.write(data);
-        Serial.println();
+        mode = data;
       }
       break;
       
       case 2: { // Type: brightness (10)
+        FastLED.setBrightness(data);
       }
       break;
       

@@ -45,10 +45,6 @@ public class MainControl extends AppCompatActivity{
     BitSet command = new BitSet(8);
     int progresssaved;
 
-    // Misc commands - need to actually check these
-    byte defaultcommand = 4;
-    byte poweroffcommand = 12;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -61,7 +57,8 @@ public class MainControl extends AppCompatActivity{
         setContentView(R.layout.activity_main_control);
 
         brightness = (SeekBar) findViewById(R.id.seekBar1);
-        brightness.setProgress(50); // Centre bar to match default brightness snowboard side
+        brightness.setMax(63); // Limit maximum to fit inside 6 bits
+        brightness.setProgress(32); // Centre bar to match default brightness snowboard side
         brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
@@ -95,13 +92,16 @@ public class MainControl extends AppCompatActivity{
         power = (Switch) findViewById(R.id.switch1);
         power.setChecked(true);
         power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            byte poweroff = 0; // 00000000
+            byte command;
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     try {
                         brightness.setEnabled(true);
                         brightness.setProgress(progresssaved); // Half brightness
-                        btSocket.getOutputStream().write(defaultcommand);
+                        command = (byte) progresssaved; // progress can be between 0 and 63, 000000 and 111111
+                        btSocket.getOutputStream().write(command);
                     } catch (IOException e) {
                         msg("Error");
                     }
@@ -111,7 +111,7 @@ public class MainControl extends AppCompatActivity{
                         progresssaved = brightness.getProgress();
                         brightness.setEnabled(false);
                         brightness.setProgress(0);
-                        btSocket.getOutputStream().write(poweroffcommand);
+                        btSocket.getOutputStream().write(poweroff);
                     } catch (IOException e) {
                         msg("Error");
                     }
@@ -123,9 +123,9 @@ public class MainControl extends AppCompatActivity{
         modeGroup = (RadioGroup) findViewById(R.id.modeGroup);
         modeGroup.check(R.id.colorDemo);
         modeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            byte colordemocommand;
-            byte mreactivecommand;
-            byte areactivecommand;
+            byte colordemocommand = 64; // 01000000
+            byte mreactivecommand = 65; // 01000001
+            byte areactivecommand = 66; // 01000010
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.colorDemo) {
