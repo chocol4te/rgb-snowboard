@@ -49,6 +49,8 @@ uint8_t data;
 
 uint8_t mode;
 uint8_t brightness;
+boolean beacon = false; 
+boolean workingbool;
 
 void setup(){
   Wire.begin();
@@ -60,7 +62,7 @@ void setup(){
   Serial.begin(57600);
   Bluetooth.begin(57600);
 
-  FastLED.addLeds<WS2812, DATA_PIN, RGB>(leds, NUM_LEDS);
+  FastLED.addLeds<WS2812B, DATA_PIN, RGB>(leds, NUM_LEDS);
 
   // No need for calibration function as accelerometer and gyro will drift over time anyway.
   // Need bluetooth-checking function
@@ -88,19 +90,21 @@ void loop(){
   //printValues();
   // Calculate new postion and velocity
   // Update LEDs to represent this
-
-  switch mode {
-    case 0: { // Color Demo
-      
+  if (beacon == false) {
+    switch (mode) {
+      case 0: { // Color Demo
+        
+      }
+      case 1: { // Motion Reactive
+       
+      }
+      case 2: { // Audio Reactive
+       
+      }
     }
-    case 1: { // Motion Reactive
-      
-    }
-    case 2: { // Audio Reactive
-      
-    }
+  } else {
+    // EMERGENCY MODE
   }
-  delay(100);
 }
 
 void updateValues() {
@@ -142,20 +146,23 @@ void updateValues() {
 void checkBluetooth() {
   while (Bluetooth.available()) { // While instead of if, just in case multiple bytes occured in between checks. Since each byte contains all the data, just use the latest one.
     inByte = Bluetooth.read();
-    // Clear unused bits, leaving just type
+
     Serial.println(inByte, BIN);
-    type = inByte;
-    bitClear(type, 2);
-    bitClear(type, 3);
-    bitClear(type, 4);
-    bitClear(type, 5);
-    bitClear(type, 6);
-    bitClear(type, 7);
-    // Clear unused bits and shift right
+  
+    type = 0; // Clear values just in case
+    data = 0; 
+
+    workingbool = bitRead(inByte, 6);
+    bitWrite(type, 0, workingbool);
+    workingbool = bitRead(inByte, 7);
+    bitWrite(type, 1, workingbool);
+
     data = inByte;
-    bitClear(data, 0);
-    bitClear(data, 1);
-    data = data >> 2;
+    bitClear(data, 6);
+    bitClear(data, 7);
+
+    Serial.println(type, BIN);
+    Serial.println(data, BIN);
     
     switch (type) {
       case 0: { // Type: power on/off (00)
@@ -178,10 +185,7 @@ void checkBluetooth() {
       break;
       
       case 3: { // Type: beacon (11)
-        Serial.write(type);
-        Serial.print(" ");
-        Serial.write(data);
-        Serial.println();
+        beacon = true;
       }
       break;
     }

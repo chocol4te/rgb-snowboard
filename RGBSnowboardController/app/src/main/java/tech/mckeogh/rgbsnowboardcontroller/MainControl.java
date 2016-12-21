@@ -54,7 +54,7 @@ public class MainControl extends AppCompatActivity{
 
         brightness = (SeekBar) findViewById(R.id.seekBar1);
         brightness.setMax(63); // Limit maximum to fit inside 6 bits
-        brightness.setProgress(32); // Centre bar to match default brightness snowboard side
+        brightness.setProgress(32); // Centre bar to match default brightness board-side
         brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
             byte command;
             @Override
@@ -72,8 +72,8 @@ public class MainControl extends AppCompatActivity{
 
                 if (btSocket != null) {
                     try {
-                        int progress = brightness.getProgress();
-                        command = (byte) progress;
+                        command = -128;
+                        command += brightness.getProgress(); // Will give range of -128 to -65, or 10-000000 to 10-111111
                         btSocket.getOutputStream().write(command);
                     } catch (IOException e) {
                         msg("Error");
@@ -83,6 +83,7 @@ public class MainControl extends AppCompatActivity{
         });
 
         power = (Switch) findViewById(R.id.switch1);
+        power.setEnabled(false); // Until I figure out how to make it work
         power.setChecked(true);
         power.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             byte poweroff = 0; // 00000000
