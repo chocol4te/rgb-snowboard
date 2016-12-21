@@ -41,7 +41,6 @@ public class DeviceList extends AppCompatActivity {
             pairedDevicesList();
 
         } else if (!bluetooth.isEnabled()) {
-            //Ask to the user turn the bluetooth on
             Intent turnBTon = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(turnBTon, 1);
             pairedDevicesList();
@@ -59,7 +58,7 @@ public class DeviceList extends AppCompatActivity {
         {
             for(BluetoothDevice bt : pairedDevices)
             {
-                list.add(bt.getName() + "\n" + bt.getAddress()); //Get the device's name and the address
+                list.add(bt.getName() + "\n" + bt.getAddress());
             }
         }
         else
@@ -69,7 +68,7 @@ public class DeviceList extends AppCompatActivity {
 
         final ArrayAdapter adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1, list);
         devicelist.setAdapter(adapter);
-        devicelist.setOnItemClickListener(myListClickListener); //Method called when the device from the list is clicked
+        devicelist.setOnItemClickListener(myListClickListener);
 
     }
 
@@ -77,15 +76,13 @@ public class DeviceList extends AppCompatActivity {
     {
         public void onItemClick (AdapterView<?> av, View v, int arg2, long arg3)
         {
-            // Get the device MAC address, the last 17 chars in the View
+
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);
 
-            // Make an intent to start next activity.
             Intent i = new Intent(DeviceList.this, MainControl.class);
 
-            //Change the activity.
-            i.putExtra(EXTRA_ADDRESS, address); //this will be received at ledControl (class) Activity
+            i.putExtra(EXTRA_ADDRESS, address);
             startActivity(i);
         }
     };

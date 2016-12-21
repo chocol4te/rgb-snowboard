@@ -67,7 +67,7 @@ void setup(){
   // Interrupt for bluetooth colour control, also write the android app
 
   /* Controller --> Arduino bluetooth comm in following format.
-  // 8 bits, 
+     8 bits, 
   0 (LSB) -- Data
   1       -- Data
   2       -- Data
@@ -177,7 +177,7 @@ void checkBluetooth() {
       }
       break;
       
-      case 3: { // Type: tbd (11)
+      case 3: { // Type: beacon (11)
         Serial.write(type);
         Serial.print(" ");
         Serial.write(data);

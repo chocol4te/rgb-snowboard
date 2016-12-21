@@ -8,9 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.bluetooth.BluetoothSocket;
-import android.content.Intent;
 import android.view.View;
-import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.RadioButton;
@@ -23,9 +21,7 @@ import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.os.AsyncTask;
-import java.util.BitSet;
 import java.io.IOException;
-import java.util.BitSet;
 import java.util.UUID;
 
 public class MainControl extends AppCompatActivity{
@@ -35,6 +31,7 @@ public class MainControl extends AppCompatActivity{
     private Button disconnect;
     private RadioGroup modeGroup;
     private RadioButton modeButton;
+    private Button emergency;
     String address = null;
     private ProgressDialog progress;
     BluetoothAdapter myBluetooth = null;
@@ -42,7 +39,6 @@ public class MainControl extends AppCompatActivity{
     private boolean isBtConnected = false;
     //SPP UUID. Look for it
     static final UUID myUUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
-    BitSet command = new BitSet(8);
     int progresssaved;
 
 
@@ -60,6 +56,7 @@ public class MainControl extends AppCompatActivity{
         brightness.setMax(63); // Limit maximum to fit inside 6 bits
         brightness.setProgress(32); // Centre bar to match default brightness snowboard side
         brightness.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            byte command;
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
 
@@ -75,13 +72,9 @@ public class MainControl extends AppCompatActivity{
 
                 if (btSocket != null) {
                     try {
-                        int progress = brightness.getProgress(); // Awful, awful. I know a range of 0-100 doesn't need a long, but what am I to do?
-                        progress = progress << 2; // Shift data along to make space for type
-                        command = BitSet.valueOf(new long[] {progress});
-                        command.set(0, true); // Binary type for brightness
-                        command.set(1, false);
-                        byte test = 0;
-                        btSocket.getOutputStream().write(test); // Aaand back to an int for sending over bluetooth. God this is awful. I am so sorry
+                        int progress = brightness.getProgress();
+                        command = (byte) progress;
+                        btSocket.getOutputStream().write(command);
                     } catch (IOException e) {
                         msg("Error");
                     }
@@ -158,62 +151,74 @@ public class MainControl extends AppCompatActivity{
             }
         });
 
-        new ConnectBT().execute(); //Call the class to connect
+        emergency = (Button) findViewById(R.id.EMERGENCY);
+        emergency.setOnClickListener(new View.OnClickListener() {
+            byte emergency = -1; // 11111111
+            @Override
+            public void onClick(View v) {
+                try {
+                    btSocket.getOutputStream().write(emergency);
+                } catch (IOException e) {
+                    msg("Error");
+                }
+            }
+        });
+        new ConnectBT().execute();
     }
 
     private void Disconnect()
     {
-        if (btSocket!=null) //If the btSocket is busy
+        if (btSocket!=null)
         {
             try
             {
-                btSocket.close(); //close connection
+                btSocket.close();
             }
             catch (IOException e)
             { msg("Error");}
         }
-        finish(); //return to the first layout
+        finish();
 
     }
-    // fast way to call Toast
+
     private void msg(String s)
     {
         Toast.makeText(getApplicationContext(),s,Toast.LENGTH_LONG).show();
     }
 
 
-    private class ConnectBT extends AsyncTask<Void, Void, Void>  // UI thread
+    private class ConnectBT extends AsyncTask<Void, Void, Void>
     {
-        private boolean ConnectSuccess = true; //if it's here, it's almost connected
+        private boolean ConnectSuccess = true;
 
         @Override
         protected void onPreExecute()
         {
-            progress = ProgressDialog.show(MainControl.this, "Connecting...", "Please wait!!!");  //show a progress dialog
+            progress = ProgressDialog.show(MainControl.this, "Connecting...", "Please wait!!!");
         }
 
         @Override
-        protected Void doInBackground(Void... devices) //while the progress dialog is shown, the connection is done in background
+        protected Void doInBackground(Void... devices)
         {
             try
             {
                 if (btSocket == null || !isBtConnected)
                 {
-                    myBluetooth = BluetoothAdapter.getDefaultAdapter();//get the mobile bluetooth device
-                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);//connects to the device's address and checks if it's available
-                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);//create a RFCOMM (SPP) connection
+                    myBluetooth = BluetoothAdapter.getDefaultAdapter();
+                    BluetoothDevice dispositivo = myBluetooth.getRemoteDevice(address);
+                    btSocket = dispositivo.createInsecureRfcommSocketToServiceRecord(myUUID);
                     BluetoothAdapter.getDefaultAdapter().cancelDiscovery();
-                    btSocket.connect();//start connection
+                    btSocket.connect();
                 }
             }
             catch (IOException e)
             {
-                ConnectSuccess = false;//if the try failed, you can check the exception here
+                ConnectSuccess = false;
             }
             return null;
         }
         @Override
-        protected void onPostExecute(Void result) //after the doInBackground, it checks if everything went fine
+        protected void onPostExecute(Void result)
         {
             super.onPostExecute(result);
 

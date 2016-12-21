@@ -67,6 +67,7 @@
             android:layout_weight="0.05" />
 
     </RadioGroup>
+
     <Button
         android:text="Disconnect"
         android:layout_height="wrap_content"
@@ -74,5 +75,23 @@
         android:layout_width="match_parent"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.79" />
+
+    <Button
+        android:text="Activate Emergency Beacon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/EMERGENCY"
+        android:layout_weight="0.05"
+        android:background="@android:color/black"
+        android:textColor="@android:color/holo_orange_light"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:elevation="0dp"
+        android:textSize="16sp" />
 
 </LinearLayout>
